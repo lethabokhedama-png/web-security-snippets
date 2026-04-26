@@ -1,0 +1,200 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# web-security-snippets — .gitignore
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# ── Python ───────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytest_cache/
+.ruff_cache/
+
+# ── Node.js ──────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnp/
+.pnp.js
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+dist/
+build/
+.next/
+out/
+.nuxt/
+.cache/
+
+# ── Go ───────────────────────────────────────────────────
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.sum
+vendor/
+
+# ── Java / Maven / Gradle ────────────────────────────────
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar.gz
+*.rar
+hs_err_pid*
+replay_pid*
+.gradle/
+build/
+.mvn/
+
+# ── Rust ─────────────────────────────────────────────────
+target/
+Cargo.lock
+**/*.rs.bk
+
+# ── Ruby ─────────────────────────────────────────────────
+*.gem
+*.rbc
+/.config
+/coverage/
+/InstalledFiles
+/pkg/
+/spec/reports/
+/spec/examples.txt
+/test/tmp/
+/test/version_tmp/
+/tmp/
+.bundle/
+vendor/bundle
+Gemfile.lock
+
+# ── C# / .NET ────────────────────────────────────────────
+[Oo]bj/
+[Bb]in/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+project.lock.json
+project.fragment.lock.json
+artifacts/
+*.nupkg
+*.snupkg
+
+# ── PHP / Composer ───────────────────────────────────────
+vendor/
+composer.lock
+.phpunit.cache/
+
+# ── Environment and secrets ──────────────────────────────
+# These must NEVER be committed — this is a security repo.
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.csr
+*.der
+secrets.json
+secrets.yml
+secrets.yaml
+*secret*
+*credential*
+*password*
+*private_key*
+
+# ── Certificates (for TLS snippets — use examples only) ──
+# Real certificates must never be committed
+# The tls-config/ folder uses placeholder/example certs only
+# *.pem — excluded above
+
+# ── IDE and editor files ─────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+desktop.ini
+
+# ── Test artifacts ───────────────────────────────────────
+coverage/
+*.lcov
+.nyc_output/
+htmlcov/
+.coverage
+.coverage.*
+junit*.xml
+test-results/
+
+# ── Logs ─────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+
+# ── Temporary files ──────────────────────────────────────
+tmp/
+temp/
+*.tmp
+*.bak
+*.backup
+*.orig
+
+# ── Docker ───────────────────────────────────────────────
+# Do not ignore Dockerfiles — they are part of snippets
+# Ignore only local Docker data
+.docker/
+
+# ── OS specific ──────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+ehthumbs.db
+Thumbs.db

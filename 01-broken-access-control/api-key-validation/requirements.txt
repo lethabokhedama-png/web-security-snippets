@@ -1,0 +1,6 @@
+# web-security-snippets — 01-broken-access-control/api-key-validation
+# Install: pip install -r requirements.txt
+Flask==3.0.2
+fastapi==0.110.0
+uvicorn==0.29.0
+cryptography==42.0.5

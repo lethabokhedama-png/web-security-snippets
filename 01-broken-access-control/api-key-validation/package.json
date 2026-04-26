@@ -1,0 +1,10 @@
+{
+  "name": "web-security-snippets-api-key-validation",
+  "version": "1.0.0",
+  "description": "API key generation, hashing, and validation snippets",
+  "license": "MIT",
+  "dependencies": {
+    "express": "4.18.3",
+    "crypto": "1.0.1"
+  }
+}

@@ -1,0 +1,10 @@
+# web-security-snippets — 01-broken-access-control/rbac
+# Ruby dependencies — pinned to exact versions
+# Install: bundle install
+
+source 'https://rubygems.org'
+
+gem 'rails', '7.1.3.4'
+gem 'jwt', '2.8.2'
+gem 'bcrypt', '3.1.20'
+gem 'pundit', '2.3.2'

@@ -1,305 +1,307 @@
+<div align="center">
+
 # 🔐 web-security-snippets
 
-> A structured, multi-language, multi-level reference library of web application security patterns — built for developers who ship production code and the teams that review it.
+**A production-grade, multi-language security reference library built for developers who ship real software.**
+
+Not a course. Not a tutorial. Not a blog post.
+A library you open when you need working security code — right now — in the language you are already using.
 
 ---
 
-<div align="center">
-
-![Security](https://img.shields.io/badge/Security-OWASP%20Top%2010-red?style=for-the-badge)
-![Languages](https://img.shields.io/badge/Languages-8+-blue?style=for-the-badge)
-![Frameworks](https://img.shields.io/badge/Frameworks-20+-green?style=for-the-badge)
-![Level](https://img.shields.io/badge/Level-Beginner%20→%20Expert-orange?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
-![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen?style=for-the-badge)
+[![OWASP Top 10](https://img.shields.io/badge/OWASP-Top%2010%20%282021%29-red?style=flat-square)](https://owasp.org/www-project-top-ten/)
+[![Languages](https://img.shields.io/badge/Languages-8-blue?style=flat-square)](#languages--frameworks)
+[![Frameworks](https://img.shields.io/badge/Frameworks-20+-green?style=flat-square)](#languages--frameworks)
+[![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](./LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen?style=flat-square)](./CONTRIBUTING.md)
+[![Security Policy](https://img.shields.io/badge/Security-Policy-orange?style=flat-square)](./SECURITY.md)
 
 </div>
 
 ---
 
-## 📌 What Is This?
+## What This Is
 
-**web-security-snippets** is not a tutorial. It is not a course. It is not a blog post series.
+Every security control in a web application — authentication, access control, injection prevention, encryption, logging — has been implemented correctly and incorrectly by thousands of teams before yours. The correct implementations follow consistent, well-understood patterns. The incorrect ones follow consistent, well-understood mistakes.
 
-It is a **living reference library** — a place developers, team leads, and security-conscious project managers come to find the exact code pattern they need, in the language and framework they are already using, at the complexity level that matches their experience.
+This library documents the correct patterns across eight languages, twenty frameworks, and three experience levels. Every snippet includes the dependencies required to run it, comments calibrated to the reader's experience level, and a clear statement of what it protects against and what it does not.
 
-Every snippet in this library exists because a real web application was compromised, a real vulnerability was exploited, or a real security control was implemented wrong. This is not theoretical. This is production-grade, opinionated, and direct.
-
-Whether you are a junior developer adding your first authentication layer, a mid-level engineer hardening an existing API, or a senior architect reviewing a team's security posture — this library has something for you.
+When your team needs to implement JWT authentication, prevent SQL injection, add rate limiting to a login endpoint, or configure a Content Security Policy — this is the first place to look.
 
 ---
 
-## 🧭 How To Navigate This Repo
+## Who This Is For
 
-This library is organized by **OWASP Top 10** security risk categories. Each category contains:
+This library is written for three distinct audiences. You will recognise yourself immediately.
 
-- A `README.md` explaining what the risk is, why it matters, and a real-world breach that happened because of it
-- Code snippets organized by **language**, **framework**, and **experience level**
-- Dependency files (`requirements.txt`, `package.json`, `go.mod`, etc.) with **pinned versions**
-- An `integrations/` subfolder with drop-in patches for existing applications
+---
+
+### 🟢 Junior Developers and Learners
+
+You are building your first production application. Security concepts like CSRF, XSS, and SQL injection are familiar names but you have not implemented defences against them yet. You are not sure which library to use, what configuration is safe, or what the difference is between hashing and encrypting a password.
+
+Every beginner file in this library is written for you. The comments explain not just what the code does but why it exists — what attack it prevents, what happens to real applications that skip it, and exactly which values you need to replace with your own. You will also find the exact install command for every dependency.
+
+**Start here:** Read the category `README.md` for any topic that interests you. Then open the `beginner` file for your language. Read everything. Replace the marked values. You are done.
+
+---
+
+### 🟡 Mid-Level Engineers and Team Leads
+
+You understand the fundamentals. You have shipped applications before. You need patterns that fit into an existing codebase, work with the specific framework your team chose, and do not require a full architectural rewrite to add.
+
+The intermediate files and the `integrations/` folder are built for you. Moderate comments explain non-obvious decisions. Integration guides show you where the code slots into a typical existing application — what changes before the addition and what changes after.
+
+**Start here:** Go directly to the category. Pick your language and framework. Check `integrations/` if you are patching an existing app rather than building from scratch.
+
+---
+
+### 🔴 Senior Engineers, Architects, and Project Managers
+
+You have seen what happens when security is treated as an afterthought. You do not need explanation. You need a clean, production-ready reference implementation to review, adapt, or hand to your team with confidence.
+
+The advanced files are written for you — minimal comments, maximum signal. The `advanced/` section covers patterns beyond the OWASP Top 10: zero trust architecture, enterprise secrets management, honeypots, canary tokens, certificate pinning, and supply chain security.
+
+**Start here:** Navigate directly to the file. The header block tells you everything relevant in ten seconds. The `advanced/` section is yours.
+
+---
+
+## How to Navigate
+
+The library is organised by the [OWASP Top 10 (2021)](https://owasp.org/www-project-top-ten/) — the most widely recognised classification of critical web application security risks. Every folder follows the same internal structure. Learn it once and you can find anything.
 
 ```
 web-security-snippets/
 │
-├── 01-broken-access-control/
-├── 02-cryptographic-failures/
-├── 03-injection/
-├── 04-insecure-design/
-├── 05-security-misconfiguration/
-├── 06-vulnerable-components/
-├── 07-auth-failures/
-├── 08-software-integrity/
-├── 09-logging-monitoring/
-├── 10-ssrf/
+├── 01-broken-access-control/       A01 — The most common web vulnerability
+├── 02-cryptographic-failures/      A02 — Password hashing, encryption, TLS, key management
+├── 03-injection/                   A03 — SQL, NoSQL, command, LDAP, XSS
+├── 04-insecure-design/             A04 — Rate limiting, input validation, threat modelling
+├── 05-security-misconfiguration/   A05 — Security headers, error handling, server hardening
+├── 06-vulnerable-components/       A06 — Dependency scanning, automated updates
+├── 07-auth-failures/               A07 — JWT, sessions, MFA, OAuth2, passkeys
+├── 08-software-integrity/          A08 — SRI, signed commits, CI/CD pipeline security
+├── 09-logging-monitoring/          A09 — Audit logging, intrusion detection, alerting
+├── 10-ssrf/                        A10 — URL validation, allowlist patterns
 │
-├── advanced/                   ← Beyond OWASP — zero trust, honeypots, supply chain
-└── integrations/               ← Drop into your existing app
+├── advanced/                       Beyond OWASP — zero trust, secrets, honeypots
+└── integrations/                   Drop into your existing app without a rewrite
+```
+
+### Inside Every Category Folder
+
+```
+{category}/
+├── README.md                ← What this risk is, real breach examples, which snippet to use
+└── {subcategory}/
+    ├── README.md            ← Deep explanation of the specific pattern
+    ├── requirements.txt     ← Python dependencies (pinned versions)
+    ├── package.json         ← Node.js dependencies (pinned versions)
+    ├── go.mod               ← Go dependencies
+    ├── [other dep files]    ← Gemfile, Cargo.toml, pom.xml, composer.json
+    ├── python-flask-beginner.py
+    ├── python-flask-advanced.py
+    ├── node-express-beginner.js
+    ├── node-express-advanced.js
+    └── [all other language files]
 ```
 
 ---
 
-## 🎯 Who This Is For
+## Understanding Snippet Files
 
-This library is intentionally written for **three distinct audiences.** You will find your level immediately.
-
----
-
-### 🟢 Junior Developers & Learners
-
-You are building your first authenticated application. You have heard terms like "SQL injection" or "JWT" but have not implemented them in a production context. You need explanation alongside the code.
-
-**What you will find:**
-- Heavy inline comments explaining not just *what* the code does but *why* it exists
-- Plain-English breakdowns of each security concept
-- Clear `# REPLACE THIS` markers so you know exactly what to change
-- Dependency files so you know exactly what to install and how
-- Real-world examples of what happens when this is skipped
-
-**Start here:** Pick any `beginner` file in any category. Read the category `README.md` first. Install the dependencies. Replace the marked values. You are done.
-
----
-
-### 🟡 Mid-Level Engineers & Team Leads
-
-You know the fundamentals. You have shipped applications before. You need patterns that fit into an existing codebase without a full rewrite, and you need them in the specific framework your team is using.
-
-**What you will find:**
-- Clean, framework-specific implementations with moderate comments
-- `integrations/` folders showing how to bolt a security layer onto an existing app
-- Notes on what each pattern does and does not protect against
-- Version-pinned dependencies so your team's setup is reproducible
-
-**Start here:** Go directly to the category you need. Pick your language and framework. Check the `integrations/` folder if you are patching an existing app rather than starting fresh.
-
----
-
-### 🔴 Senior Engineers, Architects & Project Managers
-
-You have seen what happens when security is an afterthought. You do not need explanation — you need clean, production-ready reference implementations you can adapt, review, or hand to your team.
-
-**What you will find:**
-- Minimal-comment advanced files — the pattern is self-evident
-- Architectural decision notes where the implementation requires a structural choice
-- Framework-agnostic patterns written at the language level for maximum portability
-- The `advanced/` section covering zero-trust, secrets management, supply chain security, and more
-
-**Start here:** Go straight to the file. If you have a question about the pattern, the category `README.md` has the context. Everything else is in the code.
-
----
-
-## 📖 Understanding the Snippet Format
-
-Every snippet in this library follows a consistent header format so you can assess it in seconds:
+Every code file in this library begins with a standard header. Read it before using the snippet.
 
 ```
-# Feature        : SQL Injection Prevention — Parameterized Queries
-# Language       : Python
-# Framework      : Flask + SQLAlchemy
-# Level          : 🟢 Beginner
-# OWASP          : A03 - Injection
-# Protects       : Against user-controlled input reaching raw SQL queries
-# Does NOT cover : Application logic flaws, compromised DB credentials
+# Feature        : JWT Authentication — HS256 token generation and validation
+# Language       : Python 3.11
+# Framework      : Flask 3.0
+# Level          : Beginner
+# OWASP          : A07 — Identification and Authentication Failures
+# Protects       : Against unauthenticated API access, session forgery
+# Does NOT cover : Token revocation, refresh token rotation, MFA
 # Dependencies   : See requirements.txt in this folder
-# Tested on      : Python 3.11, Flask 3.0, SQLAlchemy 2.0
+# Tested on      : Python 3.11.8, Flask 3.0.2
+# Last reviewed  : 2024-03-01
+```
+
+The **Does NOT cover** line is as important as the **Protects** line. No single snippet is a complete security solution. Security is layered. This header tells you exactly what layer you are adding.
+
+---
+
+## Difficulty Levels
+
+| Level | Who it's for | Comment style |
+|-------|-------------|---------------|
+| 🟢 **Beginner** | First time implementing this | Explains every decision in plain English |
+| 🟡 **Intermediate** | Familiar with the concept, needs the pattern | Explains non-obvious choices |
+| 🔴 **Advanced** | Experienced engineer, needs clean reference code | Minimal — the code speaks |
+
+Files are named to reflect their level:
+
+```
+python-flask-beginner.py
+python-flask-advanced.py
+node-express-intermediate.js
+go-gin-advanced.go
 ```
 
 ---
 
-## 🌐 Languages & Frameworks Covered
+## Languages and Frameworks
 
-| Language | Frameworks |
-|----------|------------|
+| Language | Frameworks and Libraries |
+|----------|--------------------------|
 | **Python** | Flask, Django, FastAPI |
 | **JavaScript / TypeScript** | Express, Fastify, NestJS, Next.js |
-| **Go** | Gin, Echo, Fiber |
+| **Go** | Gin, Echo |
 | **Java** | Spring Boot |
 | **PHP** | Laravel |
 | **Ruby** | Rails |
 | **Rust** | Axum |
 | **C#** | ASP.NET Core |
 
-> Coverage grows with contributions. If your language or framework is missing, see [CONTRIBUTING.md](./CONTRIBUTING.md).
+Coverage grows with contributions. If your language or framework is missing from a category, see [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ---
 
-## 🔢 Difficulty Levels Explained
+## Installing Dependencies
 
-| Level | Label | Who It's For | Comment Density |
-|-------|-------|-------------|-----------------|
-| 🟢 | **Beginner / Drop-in** | Junior devs, learners | Heavy — explains every decision |
-| 🟡 | **Intermediate / Needs Config** | Mid-level engineers | Moderate — explains non-obvious parts |
-| 🔴 | **Advanced / Architectural** | Seniors, architects | Minimal — the code speaks for itself |
+Every folder that contains code also contains the appropriate dependency file for each language represented. All versions are pinned exactly.
 
-Files are named to reflect their level:
-```
-python-flask-beginner.py
-python-flask-advanced.py
-node-express-intermediate.js
-```
-
----
-
-## 📦 Dependencies — How They Work Here
-
-Every folder that contains code also contains the relevant dependency file for each language. Dependencies are **always pinned to a specific version** to ensure snippets work as written.
-
-### Python
 ```bash
+# Python
 pip install -r requirements.txt
-```
 
-### Node.js
-```bash
+# Node.js
 npm install
-```
 
-### Go
-```bash
+# Go
 go mod tidy
-```
 
-### PHP
-```bash
+# PHP
 composer install
-```
 
-### Ruby
-```bash
+# Ruby
 bundle install
-```
 
-### Rust
-```bash
+# Rust
 cargo build
-```
 
-### C#
-```bash
+# Java (Maven)
+mvn install
+
+# C# (.NET)
 dotnet restore
 ```
 
-> ⚠️ **Important:** Do not blindly upgrade pinned versions without testing. Security libraries have breaking changes between versions that can silently remove protections.
+> **Do not upgrade pinned versions without testing.** Security libraries have breaking changes between versions that can silently remove protections. Verify any version change before deploying.
 
 ---
 
-## 🗺️ OWASP Top 10 — Coverage Map
+## The integrations/ Folder
 
-| # | Category | Status |
-|---|----------|--------|
-| A01 | Broken Access Control | 🔄 In progress |
-| A02 | Cryptographic Failures | 🔄 In progress |
-| A03 | Injection | 🔄 In progress |
-| A04 | Insecure Design | 🔄 In progress |
-| A05 | Security Misconfiguration | 🔄 In progress |
-| A06 | Vulnerable & Outdated Components | 🔄 In progress |
-| A07 | Identification & Authentication Failures | 🔄 In progress |
-| A08 | Software & Data Integrity Failures | 🔄 In progress |
-| A09 | Security Logging & Monitoring Failures | 🔄 In progress |
-| A10 | Server-Side Request Forgery (SSRF) | 🔄 In progress |
-| ⬆️ | Advanced (Beyond OWASP) | 🔄 In progress |
+The `integrations/` folder is for teams with an existing application who need to add a security layer without restructuring their codebase. Each integration includes a before-and-after example showing exactly where the code goes in a typical application.
+
+Available integrations:
+
+| Integration | What it does |
+|------------|-------------|
+| `add-jwt-to-existing-api/` | Adds JWT authentication middleware to an unprotected API |
+| `add-mfa-to-login/` | Adds TOTP-based multi-factor authentication to an existing login flow |
+| `add-rate-limiting-to-login/` | Adds Redis-backed rate limiting to any login or sensitive endpoint |
+| `add-rbac-to-existing-app/` | Adds role-based access control without rewriting route handlers |
+| `add-audit-logging/` | Adds structured security audit logging as middleware |
+| `add-csp-headers/` | Adds Content Security Policy headers to any web application |
 
 ---
 
-## 🚨 What This Library Is Not
+## The advanced/ Section
+
+The `advanced/` folder covers security patterns beyond baseline OWASP compliance. These are for teams operating high-value targets, regulated environments, or applications with elevated threat models.
+
+| Section | What it covers |
+|---------|---------------|
+| `zero-trust/` | Mutual TLS between services, SPIFFE workload identity |
+| `secrets-management/` | HashiCorp Vault, AWS Secrets Manager, GCP Secret Manager, Azure Key Vault |
+| `honeypots/` | Decoy endpoints and database records for attacker detection |
+| `canary-tokens/` | Embeddable tokens that alert on unauthorised access to sensitive data |
+| `certificate-pinning/` | Binding clients to specific server certificates against CA compromise |
+| `supply-chain-security/` | SBOM generation, Sigstore/cosign image signing, SLSA framework |
+
+Comment density in the advanced section is minimal. Engineers working at this level are expected to evaluate and adapt implementations to their specific environment.
+
+---
+
+## What This Library Is Not
 
 Read this before using any snippet in production.
 
-- **This is not a security audit.** Snippets are reference implementations, not a guarantee your application is secure. Security requires threat modelling, architecture review, and testing.
+**Not a security audit.** Snippets are reference implementations. They are not a guarantee that your application is secure. Security requires threat modelling, architecture review, penetration testing, and continuous monitoring alongside correct implementations.
 
-- **This is not a substitute for understanding.** Copying code you do not understand is how vulnerabilities get introduced. Read the category `README.md` before using any snippet.
+**Not a substitute for understanding.** Copying code you do not understand is one of the most common ways vulnerabilities are introduced. Read the category `README.md` before using any snippet. The beginner files are written specifically to teach as they demonstrate.
 
-- **This is not always complete protection.** Every snippet header lists what it does and does not protect against. Read that section. Defence in depth means layering multiple controls, not relying on one snippet.
+**Not always complete protection.** Every snippet header lists exactly what it does and does not protect against. Defence in depth means layering multiple controls — no single snippet makes an application secure.
 
-- **This is not version-agnostic.** Snippets are tested against specific versions. If you are on a different version, verify compatibility.
-
----
-
-## 🔧 Using the `integrations/` Folder
-
-The `integrations/` folder contains **drop-in patches** — complete, self-contained implementations you can add to an existing application without restructuring it.
-
-Each integration includes:
-- A `README.md` with prerequisites and integration steps
-- All required files for each supported language and framework
-- Before/after examples showing where the code goes in a typical app structure
-
-Available integrations:
-```
-integrations/
-├── add-jwt-to-existing-api/
-├── add-mfa-to-login/
-├── add-rate-limiting-to-login/
-├── add-rbac-to-existing-app/
-└── add-audit-logging/
-```
+**Not version-agnostic.** Snippets are tested against specific versions of languages and frameworks. If you are on a different version, verify compatibility before deploying.
 
 ---
 
-## 🤝 Contributing
+## OWASP Top 10 Coverage
 
-This library grows through contributions. If you want to add a snippet, fix an existing one, or add a new language:
+| # | Category | Subcategories |
+|---|----------|--------------|
+| A01 | Broken Access Control | RBAC, ABAC, API key validation |
+| A02 | Cryptographic Failures | Password hashing, encryption at rest, TLS config, key management |
+| A03 | Injection | SQL, NoSQL, command, LDAP, XSS |
+| A04 | Insecure Design | Rate limiting, input validation, threat modelling templates |
+| A05 | Security Misconfiguration | CSP, CORS, HSTS, X-Frame-Options, error handling, server hardening |
+| A06 | Vulnerable Components | Dependency scanning, automated update policies |
+| A07 | Authentication Failures | JWT, sessions, MFA, OAuth2, magic links, passkeys |
+| A08 | Software Integrity | Subresource integrity, signed commits, CI/CD security |
+| A09 | Logging and Monitoring | Audit logging, intrusion detection, alerting |
+| A10 | SSRF | URL validation, allowlist patterns |
 
-1. Read [CONTRIBUTING.md](./CONTRIBUTING.md) — it explains the exact format every snippet must follow
-2. Open an issue before starting large additions so we can coordinate
-3. Use the snippet header template exactly as defined
-4. Include the dependency file for your language
-5. Write at least a beginner-level version with full comments
-
-**First time contributing to open source?** Look for issues labelled `good first issue` — these are specifically scoped for new contributors and are a great way to get started.
-
----
-
-## 🔒 Security Disclosure
-
-If you find a snippet in this library that is **itself insecure** — a flawed implementation, a dangerous pattern, a vulnerable dependency — please do not open a public issue.
-
-Report it privately via: **[lethabokhedama@gmail.com]**
-
-Include:
-- The file path of the affected snippet
-- A description of the vulnerability
-- If possible, a corrected version
-
-We take this seriously. A security reference library with bad security advice is worse than no library at all.
+Full snippet-level coverage map: [OWASP-MAP.md](./OWASP-MAP.md)
 
 ---
 
-## 📄 License
+## Contributing
 
-MIT License — see [LICENSE](./LICENSE) for details.
+This library grows through contributions from developers who have implemented these patterns in production. If you want to add a snippet for a language not yet covered, fix an error in an existing snippet, or improve documentation:
 
-You are free to use any snippet in this library in personal or commercial projects. Attribution is appreciated but not required.
+1. Read [CONTRIBUTING.md](./CONTRIBUTING.md) — every contribution must follow the standards defined there
+2. Open an issue before starting large additions to coordinate with maintainers
+3. Submit a pull request using the provided template
+
+First time contributing to open source? Look for issues labelled `good first issue`.
 
 ---
 
-## ⭐ Support the Project
+## Reporting a Security Issue in a Snippet
 
-If this library saved you time, helped your team ship more securely, or taught you something new:
+If you find a snippet in this library that is itself insecure — do not open a public issue. A public disclosure gives attackers time to exploit every developer who has already copied that snippet into production.
 
-- **Star the repo** — it helps other developers find it
-- **Share it** — with your team, on LinkedIn, Reddit, or wherever developers in your network gather
-- **Contribute** — even fixing a typo or adding a missing comment helps
-- **Sponsor** — if your company uses this library professionally, consider supporting it via [GitHub Sponsors]
+Report privately: **lethabokhedama@gmail.com**
+
+Full disclosure policy: [SECURITY.md](./SECURITY.md)
+
+---
+
+## License
+
+MIT — see [LICENSE](./LICENSE). Use any snippet in personal or commercial projects. Attribution is appreciated but not required.
+
+---
+
+## Support the Project
+
+If this library helped your team ship more securely:
+
+- **Star the repo** — it helps other developers find it when they need it
+- **Share it** — with your team, in security communities, on LinkedIn, wherever developers who care about this work gather
+- **Contribute** — a new language file, a corrected snippet, a clearer explanation
+- **Sponsor** — if your organisation depends on this library, consider supporting its maintenance via [GitHub Sponsors](https://github.com/sponsors/lethabokhedama-png)
 
 ---
 
@@ -307,6 +309,6 @@ If this library saved you time, helped your team ship more securely, or taught y
 
 **Built for developers. Maintained by the community. Secured by design.**
 
-[⭐ Star this repo](https://github.com/lethabokhedama-png/web-security-snippets) · [🐛 Report an Issue](https://github.com/lethabokhedama-png/web-security-snippets/issues) · [🤝 Contribute](./CONTRIBUTING.md)
+[⭐ Star](https://github.com/lethabokhedama-png/web-security-snippets) · [🐛 Issues](https://github.com/lethabokhedama-png/web-security-snippets/issues) · [🤝 Contribute](./CONTRIBUTING.md) · [🔒 Security](./SECURITY.md)
 
 </div>
