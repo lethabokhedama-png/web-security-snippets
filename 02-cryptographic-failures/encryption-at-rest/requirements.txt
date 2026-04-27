@@ -1,0 +1,12 @@
+# web-security-snippets — 02-cryptographic-failures/encryption-at-rest
+# Python dependencies — pinned exact versions
+# Install: pip install -r requirements.txt
+
+# cryptography provides AES-256-GCM via the Fernet and hazmat layers
+cryptography==42.0.5
+
+# For Flask integration snippets
+Flask==3.0.2
+
+# For SQLAlchemy field encryption examples
+SQLAlchemy==2.0.28

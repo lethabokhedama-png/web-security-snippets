@@ -1,0 +1,8 @@
+# web-security-snippets — 02-cryptographic-failures/encryption-at-rest
+# Install: bundle install
+source 'https://rubygems.org'
+
+# OpenSSL is part of Ruby's standard library — no external gem needed
+# attr_encrypted provides model-level field encryption for Rails
+gem 'attr_encrypted', '4.0.0'
+gem 'rails',          '7.1.3'
