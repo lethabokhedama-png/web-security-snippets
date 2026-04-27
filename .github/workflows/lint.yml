@@ -1,15 +1,21 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # lint.yml
-# Runs basic linting on markdown files to catch broken links
-# and formatting issues in documentation.
+# Runs on every push to main and every pull request.
+# Checks all Markdown files for formatting issues and broken structure.
+# Fails the workflow if any linting errors are found.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 name: Lint
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   pull_request:
-    branches: [main]
+    branches:
+      - main
 
+# Minimal permissions — read-only access to repository content
 permissions:
   contents: read
 
@@ -17,17 +23,62 @@ jobs:
   markdown-lint:
     name: Lint Markdown files
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      # Pin to exact commit hash — never use a mutable tag like @v4
+      # Verify the hash at: https://github.com/actions/checkout/commits/main
+      - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - name: Lint Markdown
+      - name: Run markdownlint
         uses: DavidAnson/markdownlint-cli2-action@05f32210e84442804257b2a6f20b273450ec8265 # v17.0.0
         with:
           globs: "**/*.md"
+          # Rules disabled for this repo and why:
+          #   MD013: line-length — long code examples and tables exceed 80 chars by design
+          #   MD033: no-inline-html — used intentionally in README.md for badges and centering
+          #   MD041: first-line-heading — some files intentionally start with frontmatter
           config: |
             {
+              "default": true,
               "MD013": false,
               "MD033": false,
               "MD041": false
             }
+
+  yaml-lint:
+    name: Lint YAML files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Install yamllint
+        run: pip install yamllint==1.35.1
+
+      - name: Run yamllint on workflow files and snippet configs
+        run: |
+          yamllint \
+            --config-data "{extends: default, rules: {line-length: {max: 120}, truthy: disable}}" \
+            .github/workflows/*.yml \
+            $(find . -name "*.yml" -not -path "./.github/workflows/*" -not -path "*/node_modules/*" 2>/dev/null || true)
+
+  json-lint:
+    name: Lint JSON files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Validate all JSON files are well-formed
+        run: |
+          find . -name "*.json" -not -path "*/node_modules/*" | while read file; do
+            if ! python3 -c "import json; json.load(open('$file'))" 2>/dev/null; then
+              echo "❌ Invalid JSON: $file"
+              exit 1
+            else
+              echo "✅ Valid JSON: $file"
+            fi
+          done

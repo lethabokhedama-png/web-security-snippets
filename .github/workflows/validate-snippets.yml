@@ -1,0 +1,234 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# validate-snippets.yml
+# Runs on every pull request targeting main.
+# Validates that all code snippet files follow the required
+# header format and naming convention defined in CONTRIBUTING.md.
+# Fails the workflow if any file violates the standards.
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+name: Validate Snippets
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  validate-naming:
+    name: Check file naming convention
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Validate snippet file names
+        run: |
+          # ── Naming convention ──────────────────────────────────────────────
+          # All code files (not README, not dependency files, not configs)
+          # must follow: {language}-{framework}-{level}.{extension}
+          # Valid levels: beginner, intermediate, advanced
+          # ──────────────────────────────────────────────────────────────────
+
+          ERRORS=0
+          VALID_EXTENSIONS="py js ts go java php rb rs cs"
+          VALID_LEVELS="beginner intermediate advanced"
+
+          # Find all code files in the category folders
+          find . \
+            -path "./.github" -prune -o \
+            -path "./node_modules" -prune -o \
+            -type f \( -name "*.py" -o -name "*.js" -o -name "*.ts" -o -name "*.go" \
+                     -o -name "*.java" -o -name "*.php" -o -name "*.rb" \
+                     -o -name "*.rs" -o -name "*.cs" \) \
+            -print | while read filepath; do
+
+            filename=$(basename "$filepath")
+            # Strip the extension
+            basename_no_ext="${filename%.*}"
+            # Split by dash and get the last segment as the level
+            level=$(echo "$basename_no_ext" | rev | cut -d'-' -f1 | rev)
+
+            # Check that the level is one of the valid values
+            if ! echo "$VALID_LEVELS" | grep -qw "$level"; then
+              echo "❌ Invalid level in filename: $filepath"
+              echo "   Level '$level' is not one of: $VALID_LEVELS"
+              echo "   Expected format: {language}-{framework}-{level}.{extension}"
+              ERRORS=$((ERRORS + 1))
+            else
+              echo "✅ $filename"
+            fi
+          done
+
+          if [ "$ERRORS" -gt 0 ]; then
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "$ERRORS file(s) violate the naming convention."
+            echo "See CONTRIBUTING.md for the required format."
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            exit 1
+          fi
+
+  validate-headers:
+    name: Check snippet header blocks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Validate snippet headers
+        run: |
+          # ── Required header fields ─────────────────────────────────────────
+          # Every code file must contain all of these fields in its header.
+          # The check looks for the field name anywhere in the first 30 lines.
+          # ──────────────────────────────────────────────────────────────────
+
+          REQUIRED_FIELDS=(
+            "Feature"
+            "Language"
+            "Framework"
+            "Level"
+            "OWASP"
+            "Protects"
+            "Does NOT cover"
+            "Dependencies"
+            "Tested on"
+            "Last reviewed"
+          )
+
+          ERRORS=0
+
+          find . \
+            -path "./.github" -prune -o \
+            -path "./node_modules" -prune -o \
+            -type f \( -name "*.py" -o -name "*.js" -o -name "*.ts" -o -name "*.go" \
+                     -o -name "*.java" -o -name "*.php" -o -name "*.rb" \
+                     -o -name "*.rs" -o -name "*.cs" \) \
+            -print | while read filepath; do
+
+            # Read first 30 lines only — headers must be at the top
+            header=$(head -30 "$filepath")
+            file_errors=0
+
+            for field in "${REQUIRED_FIELDS[@]}"; do
+              if ! echo "$header" | grep -q "$field"; then
+                if [ "$file_errors" -eq 0 ]; then
+                  echo "❌ Missing header fields in: $filepath"
+                fi
+                echo "   Missing: $field"
+                file_errors=$((file_errors + 1))
+                ERRORS=$((ERRORS + 1))
+              fi
+            done
+
+            if [ "$file_errors" -eq 0 ]; then
+              echo "✅ $(basename $filepath)"
+            fi
+          done
+
+          if [ "$ERRORS" -gt 0 ]; then
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "$ERRORS header field(s) are missing across snippet files."
+            echo "See CONTRIBUTING.md for the required header format."
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            exit 1
+          fi
+
+  validate-dependencies:
+    name: Check dependency files are pinned
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Check for unpinned Python dependencies
+        run: |
+          ERRORS=0
+
+          find . -name "requirements.txt" | while read file; do
+            # Flag any line that uses >= > ~ != or * (not pinned)
+            if grep -Eq ">=|>|~=|\*|!=" "$file"; then
+              echo "❌ Unpinned dependencies in: $file"
+              grep -En ">=|>|~=|\*|!=" "$file" | while read line; do
+                echo "   $line"
+              done
+              ERRORS=$((ERRORS + 1))
+            else
+              echo "✅ Pinned: $file"
+            fi
+          done
+
+          if [ "$ERRORS" -gt 0 ]; then
+            echo ""
+            echo "All dependency versions must be pinned exactly (e.g. Flask==3.0.2)"
+            echo "See CONTRIBUTING.md for dependency requirements."
+            exit 1
+          fi
+
+      - name: Check for unpinned Node.js dependencies
+        run: |
+          ERRORS=0
+
+          find . -name "package.json" -not -path "*/node_modules/*" | while read file; do
+            # Flag ^ or ~ version prefixes in dependencies or devDependencies
+            if python3 -c "
+          import json, sys
+          data = json.load(open('$file'))
+          deps = {**data.get('dependencies', {}), **data.get('devDependencies', {})}
+          bad = {k: v for k, v in deps.items() if v.startswith(('^', '~', '>', '*'))}
+          if bad:
+              print('Unpinned:', bad)
+              sys.exit(1)
+          " 2>&1; then
+              echo "✅ Pinned: $file"
+            else
+              echo "❌ Unpinned dependencies in: $file"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done
+
+          if [ "$ERRORS" -gt 0 ]; then
+            echo ""
+            echo "All npm dependency versions must be exact (no ^ or ~ prefixes)."
+            echo "See CONTRIBUTING.md for dependency requirements."
+            exit 1
+          fi
+
+  scan-for-secrets:
+    name: Scan for accidentally committed secrets
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0  # Full history needed for secret scanning
+
+      - name: Install gitleaks
+        run: |
+          GITLEAKS_VERSION="8.18.2"
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+            | tar -xz gitleaks
+          chmod +x gitleaks
+
+      - name: Run gitleaks
+        run: |
+          ./gitleaks detect \
+            --source . \
+            --no-git \
+            --redact \
+            --exit-code 1 \
+            --log-level warn \
+            || (echo "" && echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && \
+                echo "Potential secrets detected in this PR." && \
+                echo "This is a security library — committed credentials would be catastrophic." && \
+                echo "Review the findings above and remove any real secrets." && \
+                echo "Placeholder values like YOUR_SECRET_KEY are expected and safe." && \
+                echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" && exit 1)
